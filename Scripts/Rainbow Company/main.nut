@@ -30,15 +30,6 @@ class MainClass extends GSController
 	}
 }
 
-function MainClass::Save()
-{
-	return {};
-}
-
-function MainClass::Load(version, tbl)
-{
-}
-
 function max(x1, x2)
 {
 	return x1 > x2? x1 : x2;
@@ -49,12 +40,9 @@ function MainClass::Start()
 	// Wait for the game to start
 	this.Sleep(1);
 
-	this.PostInit();
-
 	while (true) {
 		local loopStartTick = GSController.GetTick();
 
-		this.HandleEvents();
 		this.DoLoop();
 
 		// Sleep for amount of ticks based on the setting
@@ -63,28 +51,11 @@ function MainClass::Start()
 	}
 }
 
-function MainClass::HandleEvents()
-{
-	while(GSEventController.IsEventWaiting())
-	{
-		local ev = GSEventController.GetNextEvent();
-
-		if(ev == null)
-			return;
-	}
-}
-
-function MainClass::PostInit()
-{
-	GSLog.Info("PostInit");
-}
-
 function MainClass::DoLoop()
 {
 	local companyMode = GSCompanyMode(0);
-	local randomColour = this.colours[index];
-	GSCompany.SetPrimaryLiveryColour(GSCompany.LS_DEFAULT, randomColour);
+	local nextColour = this.colours[index];
+	GSCompany.SetPrimaryLiveryColour(GSCompany.LS_DEFAULT, nextColour);
 	index += 1;
 	index = index % this.colours.len();
-
 }
