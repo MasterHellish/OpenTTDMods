@@ -10,6 +10,13 @@ class FMainClass extends GSInfo {
 	function GetUrl()			{ return "None"; }
 
 	function GetSettings() {
+			AddSetting({
+			name = "ticks_between_colours",
+			description = "Amount of ticks between colours",
+			min_value = 5, max_value = 30000,
+			easy_value = 15, medium_value = 15, hard_value = 15, custom_value = 15,
+			flags = CONFIG_NONE,
+		});
 	}
 }
 

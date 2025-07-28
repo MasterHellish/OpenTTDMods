@@ -23,6 +23,8 @@ class MainClass extends GSController
 		GSCompany.COLOUR_CREAM,
 		GSCompany.COLOUR_PINK];
 
+	ticksBetweenColours = GSController.GetSetting("ticks_between_colours");
+
 	constructor()
 	{
 	}
@@ -55,9 +57,9 @@ function MainClass::Start()
 		this.HandleEvents();
 		this.DoLoop();
 
-		// Sleep for "12 ticks"
+		// Sleep for amount of ticks based on the setting
 		local ticksPassed = GSController.GetTick() - loopStartTick;
-		this.Sleep(max(1, 1 * 15 - ticksPassed));
+		this.Sleep(max(1, ticksBetweenColours - ticksPassed));
 	}
 }
 
