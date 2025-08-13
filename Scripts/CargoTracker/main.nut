@@ -1,7 +1,8 @@
 class MainClass extends GSController
 {
 	_load_data = null;
-
+ 	
+	games_loaded=0;
 	last_month = 0;
 
 	// Settings
@@ -60,12 +61,14 @@ function MainClass::Init()
         GSLog.Info("ID: " + key + ", " + GSCargo.GetName(key));
     }
 
-	// Create the league table
-	this.table_id = GSLeagueTable.New(
-		"Cargo Delivery Table",
-		"Test Header",
-		"Cargo being tracked: " + GSCargo.GetName(cargo_id)
-	);
+	if (games_loaded == 0) {
+		// Create the league table
+		this.table_id = GSLeagueTable.New(
+			"Cargo Delivery Table",
+			"Test Header",
+			"Cargo being tracked: " + GSCargo.GetName(cargo_id)
+		);
+	};
 }
 
 function MainClass::HandleEvents()
@@ -165,4 +168,29 @@ function MainClass::DoMonthLoop()
 			);
 		}
 	}
+}
+
+function MainClass::Save() {
+	GSLog.Info("Saving settings and data...");
+	return {
+		sv_cargo_id = this.cargo_id,
+		sv_use_points_scoring = this.use_points_scoring,
+		sv_last_month = this.last_month,
+		sv_table_id = this.table_id,
+		sv_company_deliverd_cargo = this.company_deliverd_cargo,
+		sv_company_league_table_element_ids = this.company_league_table_element_ids
+	};
+}
+
+function MainClass::Load(version, data) {
+	GSLog.Info("Loading settings and data from savegame made with version " + version + " of the script...");
+	foreach (key, val in data) {
+		if ( key == "sv_cargo_id" ) this.cargo_id = val;
+		if (key == "sv_use_points_scoring") this.use_points_scoring = val;
+		if (key == "sv_last_month") this.last_month = val;
+		if (key == "sv_table_id") this.table_id = val;
+		if (key == "sv_company_deliverd_cargo") this.company_deliverd_cargo = val;
+		if (key == "sv_company_league_table_element_ids") this.company_league_table_element_ids = val;
+	}
+	games_loaded = 1;
 }
