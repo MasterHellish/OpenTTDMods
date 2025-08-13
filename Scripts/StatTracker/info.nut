@@ -10,6 +10,15 @@ class FMainClass extends GSInfo {
 	function GetUrl()			{ return "https://masterhellish.net"; }
 
 	function GetSettings() {
+		AddSetting({
+			name = "show_news_article",
+			description = "Show yearly news article with stats?",
+			default_value = 0,
+			min_value = 0,
+			max_value = 1,
+			flags = CONFIG_NONE | CONFIG_INGAME
+		});
+		AddLabels("show_news_article", {_0 = "No", _1 = "Yes"});
 	}
 }
 

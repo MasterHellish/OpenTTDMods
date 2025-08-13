@@ -1,0 +1,10 @@
+TO DO...
+• We need to be able to load and save
+• Need to be able to handle events (new company, for example)
+• Correctly use lang
+• User and player info / instructions
+
+Possible features...
+• Change cargo mid-game
+• Give points rather than adding up cargos
+• Check for moving HQs, maybe a param to allow it?

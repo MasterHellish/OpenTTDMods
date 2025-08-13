@@ -19,35 +19,43 @@ class FMainClass extends GSInfo {
 			flags = CONFIG_NONE | CONFIG_INGAME
 		});
 
-		// Labels example for later
-		// AddLabels("cargo_id", {_0 = "none", _1 = "more than one"});
+		// This is for a possable future feature
+		// AddSetting({
+		// 	name = "use_points_scoring",
+		// 	description = "Count the cargo or score points?",
+		// 	default_value = 0,
+		// 	min_value = 0,
+		// 	max_value = 1,
+		// 	flags = CONFIG_NONE | CONFIG_INGAME
+		// });
+		// AddLabels("use_points_scoring", {_0 = "Count the cargo", _1 = "Score points"});
 
-		AddSetting({
-			name = "pt_first",
-			description = "Number of points for 1st place in a month",
-			default_value = 3,
-			min_value = 0,
-			max_value = 100,
-			flags = CONFIG_NONE | CONFIG_INGAME
-		});
+		// AddSetting({
+		// 	name = "pt_first",
+		// 	description = "Number of points for 1st place in a month",
+		// 	default_value = 3,
+		// 	min_value = 0,
+		// 	max_value = 100,
+		// 	flags = CONFIG_NONE | CONFIG_INGAME
+		// });
 
-		AddSetting({
-			name = "pt_second",
-			description = "Number of points for 2nd place in a month",
-			default_value = 2,
-			min_value = 0,
-			max_value = 100,
-			flags = CONFIG_NONE | CONFIG_INGAME
-		});
+		// AddSetting({
+		// 	name = "pt_second",
+		// 	description = "Number of points for 2nd place in a month",
+		// 	default_value = 2,
+		// 	min_value = 0,
+		// 	max_value = 100,
+		// 	flags = CONFIG_NONE | CONFIG_INGAME
+		// });
 
-		AddSetting({
-			name = "pt_third",
-			description = "Number of points for 3rd place in a month",
-			default_value = 1,
-			min_value = 0,
-			max_value = 100,
-			flags = CONFIG_NONE | CONFIG_INGAME
-		});
+		// AddSetting({
+		// 	name = "pt_third",
+		// 	description = "Number of points for 3rd place in a month",
+		// 	default_value = 1,
+		// 	min_value = 0,
+		// 	max_value = 100,
+		// 	flags = CONFIG_NONE | CONFIG_INGAME
+		// });
 	}
 }
 

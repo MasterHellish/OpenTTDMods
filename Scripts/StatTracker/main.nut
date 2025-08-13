@@ -5,6 +5,8 @@ class MainClass extends GSController
 	last_year = 0;
 	stat_bankrupt = 0;
 	stat_crashes = 0;
+	stat_merger = 0;
+	show_news_article = 0;
 
 	// Constructor – runs once at the start of the script
 	constructor()
@@ -31,13 +33,17 @@ function MainClass::Start()
 
 function MainClass::Init()
 {
+	this.show_news_article = GSController.GetSetting("show_news_article");
+
 	if (this._loaded_data != null) {
 		this.last_year = this._loaded_data["last_year"];
 		this.stat_bankrupt = this._loaded_data["stat_bankrupt"];
 		this.stat_crashes = this._loaded_data["stat_crashes"];
+		this.stat_merger = this._loaded_data["stat_merger"];
 		GSLog.Info("Loaded last year: " + this.last_year);
 		GSLog.Info("Loaded crashes: " + this.stat_crashes);
 		GSLog.Info("Loaded bankruptcies: " + this.stat_bankrupt);
+		GSLog.Info("Loaded mergers: " + this.stat_merger);
 	}
 }
 
@@ -64,6 +70,19 @@ function MainClass::DoLoop()
 	GSLog.Info("Number of vehicles in game: " + count);
 	GSLog.Info("Number of crashes: " + stat_crashes);
 	GSLog.Info("Number of bankruptcies: " + stat_bankrupt);
+	GSLog.Info("Number of mergers: " + stat_merger);
+
+	// Notification
+	if (this.show_news_article){
+		local text_to_diplay = "Vehicles in game: " + count + ". Crashes: " + stat_crashes + ". Bankruptcies: " + stat_bankrupt + ". Mergers: " + stat_merger;
+		GSNews.Create(
+			GSNews.NT_GENERAL,
+			GSText(GSText.STR_EMPTY1, text_to_diplay),
+			GSCompany.COMPANY_INVALID,
+			GSNews.NR_NONE,
+			0
+		);
+	}
 }
 
 function MainClass::HandleEvents()
@@ -82,6 +101,10 @@ function MainClass::HandleEvents()
 				stat_crashes++;
 				break;
 			}
+			case GSEvent.ET_COMPANY_MERGER: {
+				this.stat_merger++;
+				break;
+			}
 		}
 	}
 }
@@ -91,6 +114,7 @@ function MainClass::Save() {
 		last_year = this.last_year,
 		stat_bankrupt = this.stat_bankrupt,
 		stat_crashes = this.stat_crashes,
+		stat_merger = this.stat_merger,
 	};
 	return this.data;
 }

@@ -1,17 +1,19 @@
-// TO DO
-// we need a function that works out what companies need points
-// we need a function that updates the table correctly with the create points
-// we need to be able to load and save
-// need to be able to handle events (new company for example)
-// a parameter for choosing if we assign points or just accumulate cargo count
-// Check for moving HQ's, maybe a param to alow it?
 class MainClass extends GSController
 {
 	_load_data = null;
+
 	last_month = 0;
+
+	// Settings
 	cargo_id = 0;
+	use_points_scoring = 0;
+
+	// Data
+	company_deliverd_cargo = {};
+
+	// League table
 	table_id = 0;
-	el_id = 0;
+	company_league_table_element_ids = {};
 
 	// Constructor – runs once at the start of the script
 	constructor()
@@ -19,13 +21,7 @@ class MainClass extends GSController
 	}
 }
 
-// Helper function to get the maximum of two values
-function max(x1, x2)
-{
-	return x1 > x2 ? x1 : x2;
-}
-
-// Called once the script is fully initialized
+// Called once the script starts
 function MainClass::Start()
 {
 	this.Sleep(1); // Let the game initialize first
@@ -41,7 +37,7 @@ function MainClass::Start()
 
 		// Ensure consistent tick timing (1 day = 74 ticks)
 		local ticksPassed = GSController.GetTick() - loopStartTick;
-		this.Sleep(max(1, 74 - ticksPassed));
+		this.Sleep((74 - ticksPassed) > 1 ? (74 - ticksPassed) : 1);
 	}
 }
 
@@ -53,37 +49,59 @@ function MainClass::Init()
 	GSLog.Info("");
 
 	this.cargo_id = GSController.GetSetting("cargo_id");
+	this.use_points_scoring = GSController.GetSetting("use_points_scoring");
+	GSLog.Info("cargo_id: " + this.cargo_id);
+	GSLog.Info("use_points_scoring: " + this.use_points_scoring);
+	GSLog.Info("");
 
-	local list = GSCargoList()
+	local cargo_list = GSCargoList()
 	GSLog.Info("*** List of Cargos ***");
-	foreach(key, value in list){
+	foreach(key, value in cargo_list){
         GSLog.Info("ID: " + key + ", " + GSCargo.GetName(key));
     }
 
-	this.table_id = GSLeagueTable.New("Cargo Delivary Table", "Test Header", "Test Footer");
-	this.el_id = GSLeagueTable.NewElement(
-		this.table_id,
-		1,
-		0,
-		"Company: " + "Placeholder company name",
-		" Delivered: " + 0,
-		GSLeagueTable.LINK_COMPANY,
-		0
+	// Create the league table
+	this.table_id = GSLeagueTable.New(
+		"Cargo Delivery Table",
+		"Test Header",
+		"Cargo being tracked: " + GSCargo.GetName(cargo_id)
 	);
 }
 
 function MainClass::HandleEvents()
 {
-	if(GSEventController.IsEventWaiting()) {
+	while(GSEventController.IsEventWaiting()) {
 
-		local ev = GSEventController.GetNextEvent();
-		if (ev == null) return;
+		local event = GSEventController.GetNextEvent();
+		if (event == null) return;
 
-		// We are going to need to do some things when there are some events
-		// for now we will just have this empty one here
-		local ev_type = ev.GetEventType();
-		switch (ev_type) {
-			case GSEvent.ET_COMPANY_BANKRUPT: {
+		local event_type = event.GetEventType();
+		switch (event_type) {
+			// For V15
+			// case GSEvent.ET_COMPANY_RENAMED: {
+			// 	local company_name = event.GetNewName()
+			// 	GSLeagueTable.UpdateElementData(
+			// 		this.el_id,
+			// 		company_id,
+			// 		company_name,
+			// 		GSLeagueTable.LINK_COMPANY,
+			// 		company_id
+			// 	)
+			// 	break;
+			// }
+			case GSEvent.ET_COMPANY_NEW : {
+				local new_company_event = GSEventCompanyNew.Convert(event);
+				local company_id = new_company_event.GetCompanyID()
+				this.company_league_table_element_ids[company_id] <- GSLeagueTable.NewElement(
+					this.table_id, // table
+					0, // rating
+					company_id, // company
+					GSCompany.GetName(company_id), // text
+					"" + 0, // score
+					GSLeagueTable.LINK_COMPANY, // link_type
+					company_id // link_target
+				);
+				company_deliverd_cargo[company_id] <- 0;
 				break;
 			}
 		}
@@ -114,16 +132,17 @@ function MainClass::DoMonthLoop()
 				continue;
 			}
 			// Update the name
+			// To-Do REMOVE AFTER V15
 			local company_name = GSCompany.GetName(company_id);
 			GSLeagueTable.UpdateElementData(
-				this.el_id,
+				this.company_league_table_element_ids[company_id],
 				company_id,
 				company_name,
 				GSLeagueTable.LINK_COMPANY,
 				company_id
 			)
 
-			// Get and log Town Delivery Amount
+			// Get delivery amount
 			local town_id = GSTile.GetClosestTown(tile_index);
 			local cargo_delivery_amount = GSCargoMonitor.GetTownDeliveryAmount(
 				company_id,
@@ -131,11 +150,18 @@ function MainClass::DoMonthLoop()
 				town_id,
 				true
 			);
-			GSLog.Info(company_name + " delivered " + cargo_delivery_amount);
+
+			// Debug cargo delivered info
+			// GSLog.Info(company_name + " delivered " + cargo_delivery_amount);
+
+			// Update the league table
+			local previous_deliverd_cargo = this.company_deliverd_cargo[company_id];
+			local new_cargo_delivery_amount = previous_deliverd_cargo + cargo_delivery_amount;
+			this.company_deliverd_cargo[company_id] <- new_cargo_delivery_amount;
 			GSLeagueTable.UpdateElementScore(
-				this.el_id,
-				0,
-				"Cargo: " + cargo_delivery_amount
+				this.company_league_table_element_ids[company_id],
+				this.company_deliverd_cargo[company_id],
+				"" + this.company_deliverd_cargo[company_id]
 			);
 		}
 	}
