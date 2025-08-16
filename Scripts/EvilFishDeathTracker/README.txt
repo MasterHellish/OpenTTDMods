@@ -12,6 +12,7 @@ News article shown each year with the number of evil fish killed
 On initial game launch, add all river tiles to a list.
 Each year check if each tile in the list is still a river tile.
 For each one which is no longer a river tile, remove it from the list and increase the number of evil fish killed (1-10 per tile).
+If the single-width setting is enabled (on by default), surrounding tiles are checked so that only single-width rivers are considered for evil fish.
 ---
 
 ## 📦 What's It For?

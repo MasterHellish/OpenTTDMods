@@ -3,6 +3,8 @@ class MainClass extends GSController
 	loaded_data = false;
 	last_year = 0;
 	river_tile_list = null;
+	evil_fish_tile_list = null;
+	single_width_setting = true;
 }
 
 function MainClass::Start()
@@ -18,6 +20,8 @@ function MainClass::Start()
 
 function MainClass::Init()
 {
+	this.single_width_setting = GSController.GetSetting("single_width_setting");
+
 	if (this.loaded_data) {
 		GSLog.Info("Loaded last year: " + this.last_year);
 		GSLog.Info("Loaded river tile count: " + this.river_tile_list.Count());
@@ -37,11 +41,15 @@ function MainClass::Init()
 		}
 		GSLog.Info("Initial river tile count: " + this.river_tile_list.Count());
 	}
+
+	this.UpdateTileLists();
+
+	GSLog.Info("Evil fish tile count: " + this.evil_fish_tile_list.Count());
 }
 
 function MainClass::DoLoop()
 {
-	if (this.river_tile_list.Count() == 0) {
+	if (this.evil_fish_tile_list.Count() == 0) {
 		return;
 	}
 
@@ -59,22 +67,32 @@ function MainClass::DoLoop()
 		}
     }
 
+	local previous_evil_fish_tile_count = this.evil_fish_tile_list.Count();
+
+	this.evil_fish_tile_list.RemoveList(bombed_river_tile_list);
 	this.river_tile_list.RemoveList(bombed_river_tile_list);
+
+	local bombed_evil_fish_tiles = previous_evil_fish_tile_count - this.evil_fish_tile_list.Count();
 
 	local dead_evil_fish = 0;
 
-	for (local i = 0; i < bombed_river_tile_list.Count(); i++) {
+	for (local i = 0; i < bombed_evil_fish_tiles; i++) {
 		dead_evil_fish += (GSBase.RandRange(10) + 1);
 	}
 
+	this.UpdateTileLists();
+
 	GSLog.Info("Bombed river last year: " + bombed_river_tile_list.Count());
+	GSLog.Info("Bombed evil fish river last year: " + bombed_evil_fish_tiles);
 	GSLog.Info("Number of evil fish killed last year: " + dead_evil_fish);
 	GSLog.Info("Remaining river tile count: " + this.river_tile_list.Count());
+	GSLog.Info("Remaining evil fish river tile count: " + this.evil_fish_tile_list.Count());
 
 	local news = null;
 
-	if (this.river_tile_list.Count() == 0) {
+	if (this.evil_fish_tile_list.Count() == 0) {
 		news = GSText(GSText.STR_ALL_EVIL_FISH_KILLED);
+		this.river_tile_list = GSTileList();
 	} else {
 		news = (dead_evil_fish == 0) ? GSText(GSText.STR_NO_EVIL_FISH_KILLED) : GSText(GSText.STR_EVIL_FISH_KILLED, dead_evil_fish);
 	}
@@ -86,6 +104,55 @@ function MainClass::DoLoop()
 		GSNews.NR_NONE,
 		0
 	);
+}
+
+// Returns 1 if the neighbouring tile at the given x/y coordinates is valid and is a river tile, otherwise 0
+function MainClass::IsNeighbourValidRiverTile(tile, x, y) {
+	local neighbour_tile = tile + GSMap.GetTileIndex(x, y);
+
+	if (!GSMap.IsValidTile(neighbour_tile)) {
+		return 0;
+	} else {
+		return GSTile.IsRiverTile(neighbour_tile) ? 1 : 0;
+	}
+}
+
+function MainClass::UpdateEvilFishStatus(tile, single_width_setting) {
+	if (!single_width_setting) {
+		return 1; // All river tiles contain evil fish
+	}
+
+	// To determine if a river tile is single width:
+	// - Check each 2x2 group containing the subject tile
+	// - If all 4 tiles in any group are river, the subject tile is not single-width
+
+	local n_tile  = MainClass.IsNeighbourValidRiverTile(tile, -1, -1);
+	local ne_tile = MainClass.IsNeighbourValidRiverTile(tile, 0, -1);
+	local e_tile  = MainClass.IsNeighbourValidRiverTile(tile, 1, -1);
+	local se_tile = MainClass.IsNeighbourValidRiverTile(tile, 1, 0);
+	local s_tile  = MainClass.IsNeighbourValidRiverTile(tile, 1, 1);
+	local sw_tile = MainClass.IsNeighbourValidRiverTile(tile, 0, 1);
+	local w_tile  = MainClass.IsNeighbourValidRiverTile(tile, -1, 1);
+	local nw_tile = MainClass.IsNeighbourValidRiverTile(tile, -1, 0);
+
+	local north_group = n_tile + ne_tile + nw_tile;
+	local east_group = e_tile + ne_tile + se_tile;
+	local south_group = s_tile + se_tile + sw_tile;
+	local west_group = w_tile + nw_tile + sw_tile;
+
+	if (north_group == 3 || east_group == 3 || south_group == 3 || west_group == 3) {
+		return 0; // Tile is part of a 2x2 river group, so not single-width
+	} else {
+		return 1;
+	}
+}
+
+function MainClass::UpdateTileLists() {
+	this.river_tile_list.Valuate(this.UpdateEvilFishStatus, this.single_width_setting);
+
+	this.evil_fish_tile_list = GSTileList();
+	this.evil_fish_tile_list.AddList(this.river_tile_list);
+	this.evil_fish_tile_list.RemoveValue(0);
 }
 
 function MainClass::Save() {
@@ -110,6 +177,7 @@ function MainClass::Load(version, data) {
 
 	switch (version) {
 		case 1:
+		case 2:
 			local loaded_keys = 0;
 			foreach (key, val in data) {
 				switch (key) {
