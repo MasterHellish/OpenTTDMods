@@ -1,26 +1,43 @@
-# Cargo Tracker
+# MH Cargo Tracker
 
 ## ❓ Description
+Cargo Tracker is a Game Script for OpenTTD that measures how much of a chosen cargo type each company delivers.  
+The amount is tracked for the town nearest to that company’s headquarters, and the results are displayed in a league table.
 
 ---
 
 ## ✨ Features
-
+- 📊 Automatic league table ranking companies by delivered cargo  
+- 🏙 Tracks deliveries to the town closest to each company HQ  
+- ⚙️ Configurable cargo type (set via script settings)  
+- 💾 Save/load support – continues tracking across saved games  
+- 🚨 Handles company events: new companies, bankruptcies, and mergers  
 
 ---
 
 ## 🧠 How It Works
-
+- Each in-game month, the script checks every company’s HQ  
+- It finds the nearest town to that HQ  
+- Using the cargo monitor, it calculates how much of the chosen cargo was delivered there  
+- The totals are added to each company’s score and shown in a league table  
+- If companies appear, go bankrupt, or merge, their entries are updated automatically  
 
 ---
 
 ## 📦 What's It For?
-
+This script is designed for OpenTTD players and communities who want to:  
+- Run competitions between companies  
+- Track progress during multiplayer games  
+- Add an extra challenge by focusing on specific cargo delivery goals  
+- Use league tables as a scoring or achievement system  
 
 ---
 
 ## 🔧 Installation
-
+1. Place the `CargoTracker` folder into your `OpenTTD\content_download\game` directory
+2. In OpenTTD, go to **Game Script Settings** and select *MH Cargo Tracker*  
+3. Choose which cargo type you want to track via the script’s settings  
+4. During the game, click the **League Table button** to view company standings  
 
 ---
 

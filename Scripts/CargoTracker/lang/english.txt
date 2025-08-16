@@ -1,4 +1,8 @@
-STR_EMPTY1                    :{RAW_STRING}
+STR_EMPTY1                  :{RAW_STRING}
+
+STR_WELCOME                 :{BLACK}Welcome to the {ORANGE}MH Cargo Tracker{BLACK}. Place your HQ near a town and deliver cargo to get scores on the league table.
+STR_TABLE_TITLE             :{BLACK}Cargo Delivery Table
+STR_CARGO_TRACKED           :{BLACK}Cargo being tracked: {ORANGE}{CARGO_LIST}
 
 #usable and well visible in GUI:
 #{BLACK} {WHITE} {GREEN} {YELLOW} {ORANGE} {SILVER} {GOLD} {LTBLUE} {DKGREEN}

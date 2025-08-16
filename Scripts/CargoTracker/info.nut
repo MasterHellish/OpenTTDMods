@@ -1,11 +1,13 @@
 class FMainClass extends GSInfo {
 	function GetAuthor()		{ return "Master Hellish"; }
-	function GetName()			{ return "Cargo Tracker"; }
-	function GetDescription() 	{ return "Description"; }
-	function GetVersion()		{ return 0; }
-	function GetDate()			{ return "2025/07/25"; }
+	function GetName()			{ return "MH Cargo Tracker"; }
+	function GetDescription() {
+		return "Tracks how much of a chosen cargo is delivered to the town nearest each company's HQ, shown in a league table."
+	}
+	function GetVersion()		{ return 1; }
+	function GetDate()			{ return "2025/08/15"; }
 	function CreateInstance()	{ return "MainClass"; }
-	function GetShortName()		{ return "MHHT"; }
+	function GetShortName()		{ return "MHCT"; }
 	function GetAPIVersion()	{ return "14"; }
 	function GetUrl()			{ return "https://masterhellish.net"; }
 
