@@ -1,0 +1,3 @@
+STR_EVIL_FISH_KILLED        :{BIG_FONT}{BLUE}{COMMA} evil fish killed last year{}{BLACK}Town mayors thank transport companies for their efforts in combatting the evil fish plague
+STR_NO_EVIL_FISH_KILLED     :{BIG_FONT}{RED}No evil fish killed last year!{}{BLACK}Town mayors call for transport companies to do more to rid citizens of the evil fish plague
+STR_ALL_EVIL_FISH_KILLED    :{BIG_FONT}{GREEN}The end of the evil fish!{}{BLACK}Town mayors praise transport companies for solving one of the biggest threats of all time
