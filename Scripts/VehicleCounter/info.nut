@@ -1,6 +1,6 @@
 class FMainClass extends GSInfo {
 	function GetAuthor()		{ return "Master Hellish"; }
-	function GetName()			{ return "Vehical Counter"; }
+	function GetName()			{ return "Vehicle Counter"; }
 	function GetDescription() 	{ return "Every month counts the number of vehicles in the game and makes a log in the script logs"; }
 	function GetVersion()		{ return 1; }
 	function GetDate()			{ return "2025/07/19"; }
