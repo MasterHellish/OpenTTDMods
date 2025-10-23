@@ -2,6 +2,7 @@ class MainClass extends GSController
 {
 	// Used to load saved data (currently unused)
 	_load_data = null;
+	enable_debug = 0; // Debug Flag
 
 	// Constructor – runs once at the start of the script
 	constructor()
