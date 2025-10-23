@@ -10,6 +10,12 @@ class FMainClass extends GSInfo {
 	function GetUrl()			{ return "https://masterhellish.net"; }
 
 	function GetSettings() {
+		AddSetting({
+			name = "enable_debug",
+			description = "Enable debug messages in the script log?",
+			default_value = 0,
+			flags = CONFIG_NONE | CONFIG_INGAME | CONFIG_BOOLEAN
+		});
 	}
 }
 
