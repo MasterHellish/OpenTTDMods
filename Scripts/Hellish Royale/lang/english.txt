@@ -1,4 +1,5 @@
 STR_EMPTY1                    :{RAW_STRING}
+STR_CARGO_TRACKED           :{BLACK}Cargo being tracked: {ORANGE}{CARGO_LIST}
 
 #usable and well visible in GUI:
 #{BLACK} {WHITE} {GREEN} {YELLOW} {ORANGE} {SILVER} {GOLD} {LTBLUE} {DKGREEN}

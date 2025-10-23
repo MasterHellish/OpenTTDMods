@@ -15,6 +15,7 @@ function MainClass::CreateCustomSubsidy(cargo_id, min_distance_per, max_distance
 
 	for (local i = 0; i < 100; i++) {
 
+		// TODO: Re do this, we can't do IDS like this they cannot be guaranteed to be sequential so we need to get a random town and pull its ID
 		local town_id_1 = GSBase.RandRange(number_of_towns);
 		local town_id_2 = GSBase.RandRange(number_of_towns);
 		local town_1_location = GSTown.GetLocation(town_id_1);
@@ -52,6 +53,92 @@ function MainClass::CreateCustomSubsidy(cargo_id, min_distance_per, max_distance
 			);
 			this.Debug("New Quest Created: Connect " + GSTown.GetName(town_id_1) + " and " + GSTown.GetName(town_id_2) + " with " + GSCargo.GetName(cargo_id), 1);
 			break;
+		}
+	}
+}
+
+function MainClass::CreateDeliveryQuest(town_id, cargo_id, quantity)
+{
+
+	this.quantity = quantity;
+	this.town_id = town_id;
+	this.cargo_id = cargo_id;
+
+	// Create the LT
+	this.table_id = GSLeagueTable.New(
+		"Delivery Quest",
+		GSText(GSText.STR_CARGO_TRACKED, 1 << cargo_id),
+		""
+	);
+
+	// Create the LT companyies
+	for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
+
+		if (GSCompany.ResolveCompanyID(company_id) == GSCompany.COMPANY_INVALID) {
+			continue;
+		}
+
+		local company_name = GSCompany.GetName(company_id);
+
+		this.company_league_table_element_ids[company_id] <- GSLeagueTable.NewElement(
+		this.table_id, // table
+		0, // rating
+		company_id, // company
+		company_name, // text
+		"" + 0, // score
+		GSLeagueTable.LINK_COMPANY, // link_type
+		company_id // link_target
+		);
+
+		this.company_delivery_quest_cargo[company_id] <- 0;
+	}
+
+	// NEWS
+	local news_text = "New Quest: Deliver " + quantity + " " + GSCargo.GetName(cargo_id) + " to " + GSTown.GetName(town_id) + ".";
+	GSNews.Create(
+		GSNews.NT_GENERAL,
+		GSText(GSText.STR_EMPTY1, news_text),
+		GSCompany.COMPANY_INVALID,
+		GSNews.NR_TOWN,
+		town_id
+	);
+
+}
+
+function MainClass::CheckingDeliveryQuest()
+{
+	for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
+		if (GSCompany.ResolveCompanyID(company_id) != GSCompany.COMPANY_INVALID) {
+
+			// Get delivery amount
+			local cargo_delivery_amount = GSCargoMonitor.GetTownDeliveryAmount(
+				company_id,
+				this.cargo_id,
+				town_id,
+				true
+			);
+
+			// Update the league table
+			local previous_deliverd_cargo = this.company_delivery_quest_cargo[company_id];
+			local new_cargo_delivery_amount = previous_deliverd_cargo + cargo_delivery_amount;
+			this.company_delivery_quest_cargo[company_id] <- new_cargo_delivery_amount;
+			GSLeagueTable.UpdateElementScore(
+				this.company_league_table_element_ids[company_id],
+				this.company_delivery_quest_cargo[company_id],
+				"" + this.company_delivery_quest_cargo[company_id]
+			);
+
+			if (new_cargo_delivery_amount >= this.quantity){
+				// NEWS
+				local news_text = "You did it!";
+				GSNews.Create(
+					GSNews.NT_GENERAL,
+					GSText(GSText.STR_EMPTY1, news_text),
+					GSCompany.COMPANY_INVALID,
+					GSNews.NR_NONE,
+					0
+				);
+			}
 		}
 	}
 }

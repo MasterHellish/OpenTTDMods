@@ -71,28 +71,48 @@ function MainClass::HandleEvents()
 function MainClass::PostInit()
 {
 
-	local x = 0;
-	local y = 0;
+	local x = GSIndustry.SetExclusiveSupplier(0, 999999);
+	local y = GSIndustry.SetExclusiveConsumer(0, 999999);
 
-	for (local i = 0; i < 500; i++) {
-		// Pick random step size between 1 and 5
-		local stepX = GSBase.RandRange(3) + 1;  // gives 1..5
-		local stepY = GSBase.RandRange(3) + 1;  // gives 1..5
+	GSLog.Info("SetExclusiveSupplier:" + x);
+	GSLog.Info("SetExclusiveConsumer:" + y);
 
-		// Randomly decide to add or subtract
-		if (GSBase.RandRange(2) == 0) stepX = -stepX;
-		if (GSBase.RandRange(2) == 0) stepY = -stepY;
+	local i = GSIndustry.GetExclusiveSupplier(0);
+	local j = GSIndustry.GetExclusiveConsumer(0);
 
-		// Apply step
-		x += stepX;
-		y += stepY;
+	GSLog.Info("GetExclusiveSupplier:" + i);
+	GSLog.Info("GetExclusiveConsumer:" + j);
 
-		// Get map center offset by x,y
-		local middleTile = GSMap.GetTileIndex(GSMap.GetMapSizeX() / 2 + x, GSMap.GetMapSizeY() / 2 + y);
+	GSNews.Create(
+		GSNews.NT_GENERAL,
+		GSText(GSText.STR_EMPTY1, "SetExclusiveSupplier"),
+		GSCompany.COMPANY_INVALID,
+		GSNews.NR_INDUSTRY,
+		0
+	);
 
-		// Scroll viewport
-		GSViewport.ScrollEveryoneTo(middleTile);
-	}
+	// local x = 0;
+	// local y = 0;
+
+	// for (local i = 0; i < 500; i++) {
+	// 	// Pick random step size between 1 and 5
+	// 	local stepX = GSBase.RandRange(3) + 1;  // gives 1..5
+	// 	local stepY = GSBase.RandRange(3) + 1;  // gives 1..5
+
+	// 	// Randomly decide to add or subtract
+	// 	if (GSBase.RandRange(2) == 0) stepX = -stepX;
+	// 	if (GSBase.RandRange(2) == 0) stepY = -stepY;
+
+	// 	// Apply step
+	// 	x += stepX;
+	// 	y += stepY;
+
+	// 	// Get map center offset by x,y
+	// 	local middleTile = GSMap.GetTileIndex(GSMap.GetMapSizeX() / 2 + x, GSMap.GetMapSizeY() / 2 + y);
+
+	// 	// Scroll viewport
+	// 	GSViewport.ScrollEveryoneTo(middleTile);
+	// }
 
 	// local middleTile = GSMap.GetTileIndex(GSMap.GetMapSizeX() / 2, GSMap.GetMapSizeY() / 2);
 	// GSSign.BuildSign(

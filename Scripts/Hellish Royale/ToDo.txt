@@ -1,0 +1,22 @@
+• Seperate Quests
+• Create a Quest Manager
+
+• Seperate Disaster
+• Create a Disaster Manager
+
+• Add setting for quests frequencie
+• Add setting for disaster frequencie
+
+• Add yearly monthly and daily loops
+
+• Create Rewards
+• Create Tools
+
+• Use the goal feature to track quest and other progress
+
+• some sort of elimination Manager
+• Environment Manager {
+    • blow things up around the edge of the world 
+    • Dissable the industries
+    • lower land around the edge of the world 
+}

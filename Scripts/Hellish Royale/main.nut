@@ -2,7 +2,6 @@ class MainClass extends GSController
 {
 	// Used to load saved data (currently unused)
 	_load_data = null;
-	enable_debug = 0; // Debug flag
 
 	// Constructor – runs once at the start of the script
 	constructor()
@@ -74,12 +73,9 @@ function MainClass::HandleEvents()
 // Perform setup actions like logging and placing signs
 function MainClass::PostInit()
 {
-	// Get debug setting
-	this.enable_debug = GSController.GetSetting("enable_debug");
-	this.Debug("Debug mode is " + (enable_debug ? "enabled" : "disabled"), 0);
-	this.Debug("Script initialized successfully", 0);
+
 	// TESTING ONLY
-	this.CreateCustomSubsidy(0, 0.15, 0.50);
+	//this.CreateCustomSubsidy(0, 0.15, 0.50);
 
 	// TESTING ONLY
 	// local town_tile = GSTown.GetLocation(0)
@@ -93,7 +89,7 @@ function MainClass::PostInit()
 // Your custom logic that runs each loop goes here
 function MainClass::DoLoop()
 {
-	// Example: check goal conditions, update company state, etc.
+	this.CheckingDeliveryQuest();
 }
 
 // Called when a new company is created
