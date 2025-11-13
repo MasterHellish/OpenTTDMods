@@ -2,14 +2,7 @@ class MainClass extends GSController
 {
 	// Used to load saved data (currently unused)
 	_load_data = null;
-
-	// TODO: Try and move theas later to some place in the quest area
-	company_delivery_quest_cargo = {};
-	table_id = 0;
-	company_league_table_element_ids = {};
-	cargo_id = 0;
-	town_id = 0;
-	quantity = 0;
+	enable_debug = 0; // Debug Flag
 
 	// Constructor – runs once at the start of the script
 	constructor()
@@ -20,15 +13,16 @@ class MainClass extends GSController
 // Called when the script state is saved (e.g., during a savegame)
 function MainClass::Save()
 {
-	GSLog.Info("This is the log for when we are saving");
+	//GSLog.Info("This is the log for when we are saving");
+	this.Debug("This is the log for when we are saving", 0);
 	return {}; // You can return a table of data here to persist
 }
 
 // Called when the script state is loaded
 function MainClass::Load(version, tbl)
 {
-	GSLog.Info("This is the log for when we are loading");
-
+	//GSLog.Info("This is the log for when we are loading");
+	this.Debug("This is the log for when we are loading", 0);
 	// You can restore saved data from 'tbl' here
 	foreach(key, val in tbl)
 	{
@@ -81,8 +75,6 @@ function MainClass::HandleEvents()
 function MainClass::PostInit()
 {
 
-	this.CreateDeliveryQuest(0, 0, 50);
-
 	// TESTING ONLY
 	//this.CreateCustomSubsidy(0, 0.15, 0.50);
 
@@ -133,3 +125,4 @@ function MainClass::UpdateGlobal()
 
 require("disasters.nut");
 require("quests.nut");
+require("debug.nut");

@@ -21,11 +21,11 @@ function MainClass::CreateCustomSubsidy(cargo_id, min_distance_per, max_distance
 		local town_1_location = GSTown.GetLocation(town_id_1);
 		local town_2_location = GSTown.GetLocation(town_id_2);
 		local manhattan_distance = GSMap.DistanceManhattan(town_1_location, town_2_location);
-		// GSLog.Info("manhattan_distance: " + manhattan_distance);
-		// GSLog.Info("manhattan_map_size: " + manhattan_map_size);
-		// GSLog.Info("min_distance_per: " + manhattan_map_size * min_distance_per);
-		// GSLog.Info("max_distance_per: " + manhattan_map_size * max_distance_per);
-		// GSLog.Info("-----------------------------");
+		this.Debug("manhattan_distance: " + manhattan_distance, 1);
+		this.Debug("manhattan_map_size: " + manhattan_map_size, 1);
+		this.Debug("min_distance_per: " + manhattan_map_size * min_distance_per, 1);
+		this.Debug("max_distance_per: " + manhattan_map_size * max_distance_per,1);
+		this.Debug("-----------------------------",1);
 
 		if (
 			manhattan_distance > manhattan_map_size * min_distance_per
@@ -51,7 +51,7 @@ function MainClass::CreateCustomSubsidy(cargo_id, min_distance_per, max_distance
 				GSNews.NR_NONE,
 				0
 			);
-
+			this.Debug("New Quest Created: Connect " + GSTown.GetName(town_id_1) + " and " + GSTown.GetName(town_id_2) + " with " + GSCargo.GetName(cargo_id), 1);
 			break;
 		}
 	}
