@@ -77,19 +77,20 @@ function MainClass::HandleEvents()
 
 		local event_type = event.GetEventType();
 		switch (event_type) {
-			// For V15
-			// case GSEvent.ET_COMPANY_RENAMED: {
-			// 	local company_name = event.GetNewName()
-			// 	GSLeagueTable.UpdateElementData(
-			// 		this.el_id,
-			// 		company_id,
-			// 		company_name,
-			// 		GSLeagueTable.LINK_COMPANY,
-			// 		company_id
-			// 	)
-			//  this.company_names[company_id] <- company_name;
-			// 	break;
-			// }
+			case GSEvent.ET_COMPANY_RENAMED: {
+				local rename_company_event = GSEventCompanyRenamed.Convert(event)
+				local company_name = rename_company_event.GetNewName()
+				local company_id = rename_company_event.GetCompanyID()
+				GSLeagueTable.UpdateElementData(
+					this.company_league_table_element_ids[company_id],
+					company_id,
+					company_name,
+					GSLeagueTable.LINK_COMPANY,
+					company_id
+				)
+				this.company_names[company_id] <- company_name;
+				break;
+			}
 			case GSEvent.ET_COMPANY_NEW : {
 				local new_company_event = GSEventCompanyNew.Convert(event);
 				local company_id = new_company_event.GetCompanyID()
@@ -170,17 +171,6 @@ function MainClass::DoMonthLoop()
 			if (tile_index == GSMap.TILE_INVALID){
 				continue;
 			}
-			// Update the name
-			// To-Do REMOVE AFTER V15
-			local company_name = GSCompany.GetName(company_id);
-			GSLeagueTable.UpdateElementData(
-				this.company_league_table_element_ids[company_id],
-				company_id,
-				company_name,
-				GSLeagueTable.LINK_COMPANY,
-				company_id
-			)
-			this.company_names[company_id] <- company_name;
 
 			// Get delivery amount
 			local town_id = GSTile.GetClosestTown(tile_index);
