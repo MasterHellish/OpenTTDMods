@@ -4,14 +4,17 @@ class MainClass extends GSController
 	last_month = 0;
 
 	// Settings
-	cargo_id = 0;
+	cargo_ids = [];
 
 	// Data
 	company_delivered_cargo = {};
 	company_names = {};
 
 	// League table
-	table_id = 0;
+
+
+
+	table_ids = [];
 	company_league_table_element_ids = {};
 
 	// Constructor – runs once at the start of the script
@@ -47,24 +50,31 @@ function MainClass::Init()
 	GSLog.Info("*********************");
 	GSLog.Info("");
 
-	this.cargo_id = GSController.GetSetting("cargo_id");
-	GSLog.Info("Selected cargo id: " + this.cargo_id);
-	GSLog.Info("");
+	//this.cargo_id = GSController.GetSetting("cargo_id");
+	//GSLog.Info("Selected cargo id: " + this.cargo_id);
+	//GSLog.Info("");
 
 	local cargo_list = GSCargoList()
 	GSLog.Info("*** List of Cargos ***");
 	foreach(key, value in cargo_list){
         GSLog.Info("ID: " + key + ", " + GSCargo.GetName(key));
+		this.cargo_ids.append(key)
     }
 	GSLog.Info("");
 
 	if (!this.game_was_loaded) {
-		// Create the league table
-		this.table_id = GSLeagueTable.New(
-			GSText(GSText.STR_TABLE_TITLE),
-			GSText(GSText.STR_CARGO_TRACKED, 1 << this.cargo_id),
-			""
-		);
+		// Create the league tables
+		foreach (value in cargo_ids)
+		{
+			local table_id = GSLeagueTable.New(
+				GSText(GSText.STR_CARGO_TRACKED, 1 << value),
+				GSText(GSText.STR_CARGO_TRACKED, 1 << value),
+				""
+			);
+
+			this.table_ids.append(table_id);
+		}
+
 	};
 }
 
@@ -96,7 +106,7 @@ function MainClass::HandleEvents()
 				local company_name = GSCompany.GetName(company_id);
 
 				this.company_league_table_element_ids[company_id] <- GSLeagueTable.NewElement(
-					this.table_id, // table
+					this.table_ids[0], // table
 					0, // rating
 					company_id, // company
 					company_name, // text
@@ -160,16 +170,18 @@ function MainClass::DoDayLoop()
 
 function MainClass::DoMonthLoop()
 {
-	this.cargo_id = GSController.GetSetting("cargo_id");
+	foreach (cargo_id in this.cargo_ids) {
 
-	for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
-		if (GSCompany.ResolveCompanyID(company_id) != GSCompany.COMPANY_INVALID) {
+		//this.cargo_id = GSController.GetSetting("cargo_id");
 
-			// Check company has HQ
-			local tile_index  = GSCompany.GetCompanyHQ(company_id)
-			if (tile_index == GSMap.TILE_INVALID){
-				continue;
-			}
+		for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
+			if (GSCompany.ResolveCompanyID(company_id) != GSCompany.COMPANY_INVALID) {
+
+				// Check company has HQ
+				local tile_index  = GSCompany.GetCompanyHQ(company_id)
+				if (tile_index == GSMap.TILE_INVALID){
+					continue;
+				}
 			// Update the name
 			// To-Do REMOVE AFTER V15
 			local company_name = GSCompany.GetName(company_id);
@@ -186,7 +198,7 @@ function MainClass::DoMonthLoop()
 			local town_id = GSTile.GetClosestTown(tile_index);
 			local cargo_delivery_amount = GSCargoMonitor.GetTownDeliveryAmount(
 				company_id,
-				this.cargo_id,
+				cargo_id,
 				town_id,
 				true
 			);
@@ -202,7 +214,8 @@ function MainClass::DoMonthLoop()
 				this.company_league_table_element_ids[company_id],
 				this.company_delivered_cargo[company_id],
 				"" + this.company_delivered_cargo[company_id]
-			);
+				);
+			}
 		}
 	}
 }
@@ -212,7 +225,7 @@ function MainClass::Save() {
 	return {
 		sv_cargo_id = this.cargo_id,
 		sv_last_month = this.last_month,
-		sv_table_id = this.table_id,
+		sv_table_id = this.table_ids[0],
 		sv_company_delivered_cargo = this.company_delivered_cargo,
 		sv_company_league_table_element_ids = this.company_league_table_element_ids,
 		sv_company_names = this.company_names
@@ -224,7 +237,7 @@ function MainClass::Load(version, data) {
 	foreach (key, val in data) {
 		if (key == "sv_cargo_id" ) this.cargo_id = val;
 		if (key == "sv_last_month") this.last_month = val;
-		if (key == "sv_table_id") this.table_id = val;
+		if (key == "sv_table_id") this.table_ids[0] = val;
 		if (key == "sv_company_delivered_cargo") this.company_delivered_cargo = val;
 		if (key == "sv_company_league_table_element_ids") this.company_league_table_element_ids = val;
 		if (key == "sv_company_names") this.company_names = val;
