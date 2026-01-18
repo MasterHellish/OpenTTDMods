@@ -73,17 +73,33 @@ function MainClass::HandleEvents()
 		local event_type = event.GetEventType();
 		switch (event_type) {
 			case GSEvent.ET_COMPANY_RENAMED: {
-				local rename_company_event = GSEventCompanyRenamed.Convert(event)
-				local company_name = rename_company_event.GetNewName()
-				local company_id = rename_company_event.GetCompanyID()
-				GSLeagueTable.UpdateElementData(
-					this.company_league_table_element_ids[company_id],
+				local event = GSEventCompanyRenamed.Convert(event);
+				local company_id = event.GetCompanyID()
+				local company_name = event.GetNewName()
+				if (company_id in company_league_table_elements) {
+					GSLeagueTable.UpdateElementData(
+					this.company_league_table_elements[company_id],
 					company_id,
 					company_name,
 					GSLeagueTable.LINK_COMPANY,
 					company_id
-				)
-				this.company_names[company_id] <- company_name;
+					)
+					this.company_names[company_id] <- company_name;
+				}
+				else {
+					this.company_league_table_elements[company_id] <- GSLeagueTable.NewElement(
+						this.table_id, // table
+						0, // rating
+						company_id, // company
+						company_name, // text
+						"" + 0, // score
+						GSLeagueTable.LINK_COMPANY, // link_type
+						company_id // link_target
+					);
+
+					this.company_delivered_cargo[company_id] <- 0;
+					this.company_names[company_id] <- company_name;
+					}
 				break;
 			}
 			case GSEvent.ET_COMPANY_NEW : {
