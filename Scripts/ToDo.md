@@ -11,3 +11,15 @@
 
 - Update references to year to year/period (Perhaps depending on where the wallclock is being used).
 - Improve news message with better spacing and coloured text.
+
+# Cargo Tracker
+
+- News notification on leader change
+- End of year news notification (top 3) ?
+- Change cargo mid-game
+- Check for moving HQs, maybe a param to allow it
+- Give points rather than adding up cargos ?
+- Track multiple/all cargoes ???
+- Track all towns ???
+- Track industries rather than towns ???
+- The script changes the cargo every x ??
