@@ -7,12 +7,12 @@ class MainClass extends GSController
 	cargo_id = 0;
 
 	// Data
-	company_delivered_cargo = {};
-	company_names = {};
+	company_delivered_cargo = {}; // company id is the key
+	company_names = {}; // company id is the key
 
 	// League table
 	table_id = 0;
-	company_league_table_element_ids = {};
+	company_league_table_elements = {}; // company id is the key
 
 	// Constructor – runs once at the start of the script
 	constructor()
@@ -42,11 +42,6 @@ function MainClass::Start()
 
 function MainClass::Init()
 {
-	GSLog.Info("*********************");
-	GSLog.Info("*** Cargo Tracker ***");
-	GSLog.Info("*********************");
-	GSLog.Info("");
-
 	this.cargo_id = GSController.GetSetting("cargo_id");
 	GSLog.Info("Selected cargo id: " + this.cargo_id);
 	GSLog.Info("");
@@ -77,25 +72,26 @@ function MainClass::HandleEvents()
 
 		local event_type = event.GetEventType();
 		switch (event_type) {
-			// For V15
-			// case GSEvent.ET_COMPANY_RENAMED: {
-			// 	local company_name = event.GetNewName()
-			// 	GSLeagueTable.UpdateElementData(
-			// 		this.el_id,
-			// 		company_id,
-			// 		company_name,
-			// 		GSLeagueTable.LINK_COMPANY,
-			// 		company_id
-			// 	)
-			//  this.company_names[company_id] <- company_name;
-			// 	break;
-			// }
+			case GSEvent.ET_COMPANY_RENAMED: {
+				local event = GSEventCompanyRenamed.Convert(event);
+				local company_id = event.GetCompanyID()
+				local company_name = event.GetNewName()
+				GSLeagueTable.UpdateElementData(
+					this.company_league_table_elements[company_id],
+					company_id,
+					company_name,
+					GSLeagueTable.LINK_COMPANY,
+					company_id
+				)
+			 this.company_names[company_id] <- company_name;
+				break;
+			}
 			case GSEvent.ET_COMPANY_NEW : {
 				local new_company_event = GSEventCompanyNew.Convert(event);
 				local company_id = new_company_event.GetCompanyID()
 				local company_name = GSCompany.GetName(company_id);
 
-				this.company_league_table_element_ids[company_id] <- GSLeagueTable.NewElement(
+				this.company_league_table_elements[company_id] <- GSLeagueTable.NewElement(
 					this.table_id, // table
 					0, // rating
 					company_id, // company
@@ -123,9 +119,9 @@ function MainClass::HandleEvents()
 				local company_id = bankrupt_company_event.GetCompanyID()
 				GSLog.Info("Company " + this.company_names[company_id] + " went bankrupt. They had a score of: " + this.company_delivered_cargo[company_id]);
 				GSLeagueTable.RemoveElement(
-					this.company_league_table_element_ids[company_id]
+					this.company_league_table_elements[company_id]
 				);
-				delete this.company_league_table_element_ids[company_id]
+				delete this.company_league_table_elements[company_id]
 				delete this.company_delivered_cargo[company_id]
 				delete this.company_names[company_id]
 				break;
@@ -136,9 +132,9 @@ function MainClass::HandleEvents()
 				local company_id = merger_company_event.GetOldCompanyID()
 				GSLog.Info("Company " + this.company_names[company_id] + " got bought out. They had a score of: " + this.company_delivered_cargo[company_id]);
 				GSLeagueTable.RemoveElement(
-					this.company_league_table_element_ids[company_id]
+					this.company_league_table_elements[company_id]
 				);
-				delete this.company_league_table_element_ids[company_id]
+				delete this.company_league_table_elements[company_id]
 				delete this.company_delivered_cargo[company_id]
 				delete this.company_names[company_id]
 				break;
@@ -170,17 +166,6 @@ function MainClass::DoMonthLoop()
 			if (tile_index == GSMap.TILE_INVALID){
 				continue;
 			}
-			// Update the name
-			// To-Do REMOVE AFTER V15
-			local company_name = GSCompany.GetName(company_id);
-			GSLeagueTable.UpdateElementData(
-				this.company_league_table_element_ids[company_id],
-				company_id,
-				company_name,
-				GSLeagueTable.LINK_COMPANY,
-				company_id
-			)
-			this.company_names[company_id] <- company_name;
 
 			// Get delivery amount
 			local town_id = GSTile.GetClosestTown(tile_index);
@@ -199,7 +184,7 @@ function MainClass::DoMonthLoop()
 			local new_cargo_delivery_amount = previous_deliverd_cargo + cargo_delivery_amount;
 			this.company_delivered_cargo[company_id] <- new_cargo_delivery_amount;
 			GSLeagueTable.UpdateElementScore(
-				this.company_league_table_element_ids[company_id],
+				this.company_league_table_elements[company_id],
 				this.company_delivered_cargo[company_id],
 				"" + this.company_delivered_cargo[company_id]
 			);
@@ -214,7 +199,7 @@ function MainClass::Save() {
 		sv_last_month = this.last_month,
 		sv_table_id = this.table_id,
 		sv_company_delivered_cargo = this.company_delivered_cargo,
-		sv_company_league_table_element_ids = this.company_league_table_element_ids,
+		sv_company_league_table_elements = this.company_league_table_elements,
 		sv_company_names = this.company_names
 	};
 }
@@ -226,7 +211,7 @@ function MainClass::Load(version, data) {
 		if (key == "sv_last_month") this.last_month = val;
 		if (key == "sv_table_id") this.table_id = val;
 		if (key == "sv_company_delivered_cargo") this.company_delivered_cargo = val;
-		if (key == "sv_company_league_table_element_ids") this.company_league_table_element_ids = val;
+		if (key == "sv_company_league_table_elements") this.company_league_table_elements = val;
 		if (key == "sv_company_names") this.company_names = val;
 	}
 	game_was_loaded = 1;

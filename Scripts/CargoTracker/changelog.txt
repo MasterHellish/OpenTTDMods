@@ -1,0 +1,7 @@
+Version 1 (Jan 2026)
+- Tracks delivered amounts for a selected cargo type (configurable via cargo_id setting)
+- Creates an in-game league table showing each company’s cumulative delivered cargo score
+- Updates scores monthly by reading town delivery amounts from each company’s HQ town
+- Auto-adds new companies to the table and sends a welcome info goal message
+- Handles company renames, bankruptcies, and mergers (keeps the table clean and up to date)
+- Save/load support for settings, league table ID, company scores, and company name data

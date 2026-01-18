@@ -1,4 +1,4 @@
-# MH Cargo Tracker
+# Cargo Tracker
 
 ## Description
 
@@ -41,7 +41,7 @@ This script is designed for OpenTTD players and communities who want to:
 ## Installation
 
 1. Place the `CargoTracker` folder into your `OpenTTD\content_download\game` directory
-2. In OpenTTD, go to **Game Script Settings** and select _MH Cargo Tracker_
+2. In OpenTTD, go to **Game Script Settings** and select _Cargo Tracker_
 3. Choose which cargo type you want to track via the script’s settings
 4. During the game, click the **League Table button** to view company standings
 
