@@ -7,8 +7,8 @@ class MainClass extends GSController
 	cargo_id = 0;
 
 	// Data
-	company_delivered_cargo = {}; // company id is the key
-	company_names = {}; // company id is the key
+	company_delivered_cargo = {}; // company id is the key // company id is the key
+	company_names = {}; // company id is the key // company id is the key
 
 	// League table
 	table_id = 0;
