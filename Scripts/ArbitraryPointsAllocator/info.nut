@@ -2,7 +2,7 @@ class FMainClass extends GSInfo {
 	function GetAuthor()		{ return "Master Hellish"; }
 	function GetName()			{ return "Arbitrary Points Allocator"; }
 	function GetDescription() {
-		return ""
+		return "Manually sets company points each in-game day based on configured values, enabling custom league table scoring."
 	}
 	function GetVersion()		{ return 1; }
 	function GetDate()			{ return "2026/01/23"; }

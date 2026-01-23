@@ -1,2 +1,6 @@
 Version 1 (Jan 2026)
-- 
+- Creates a custom league table for all companies
+- Automatically adds, updates, and removes companies as the game changes
+- Sets company points daily from GameScript settings
+- Scores are forced, not calculated or accumulated
+- Fully save/load safe
