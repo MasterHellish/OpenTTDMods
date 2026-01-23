@@ -1,0 +1,8 @@
+STR_EMPTY1                  :{RAW_STRING}
+
+STR_TABLE_TITLE             :Company Points
+
+#usable and well visible in GUI:
+#{BLACK} {WHITE} {GREEN} {YELLOW} {ORANGE} {SILVER} {GOLD} {LTBLUE} {DKGREEN}
+#usable colours
+#{BLACK}  {WHITE} {RED}    {GREEN} {BLUE}   {YELLOW} {ORANGE} {PURPLE} {GRAY}   {BROWN} {SILVER} {GOLD} {CREAM}  {LTBLUE} {DKBLUE} {DKGREEN} {LTBROWN} 

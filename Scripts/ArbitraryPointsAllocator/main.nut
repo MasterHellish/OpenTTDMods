@@ -1,0 +1,156 @@
+class MainClass extends GSController
+{
+	game_was_loaded=0;
+	last_month = 0;
+
+	// Data
+	company_points = {}; // company id is the key
+	company_names = {}; // company id is the key
+
+	// League table
+	table_id = 0;
+	company_league_table_elements = {}; // company id is the key
+
+	// Constructor – runs once at the start of the script
+	constructor()
+	{
+	}
+}
+
+// Called once the script starts
+function MainClass::Start()
+{
+	this.Sleep(1); // Let the game initialize first
+
+	this.Init(); // Do any setup actions here
+
+	// Main loop – runs once per day
+	while (true) {
+		local loopStartTick = GSController.GetTick();
+
+		this.HandleEvents(); // Process incoming events
+		this.DoDayLoop();       // Your main game logic
+
+		// Ensure consistent tick timing (1 day = 74 ticks)
+		local ticksPassed = GSController.GetTick() - loopStartTick;
+		this.Sleep((74 - ticksPassed) > 1 ? (74 - ticksPassed) : 1);
+	}
+}
+
+function MainClass::Init()
+{
+	if (!this.game_was_loaded) {
+		// Create the league table
+		this.table_id = GSLeagueTable.New(
+			GSText(GSText.STR_TABLE_TITLE),
+			"",
+			""
+		);
+	};
+}
+
+function MainClass::HandleEvents()
+{
+	while(GSEventController.IsEventWaiting()) {
+
+		local event = GSEventController.GetNextEvent();
+		if (event == null) return;
+
+		local event_type = event.GetEventType();
+		switch (event_type) {
+			case GSEvent.ET_COMPANY_RENAMED: {
+				local event = GSEventCompanyRenamed.Convert(event);
+				local company_id = event.GetCompanyID()
+				local company_name = event.GetNewName()
+				GSLeagueTable.UpdateElementData(
+					this.company_league_table_elements[company_id],
+					company_id,
+					company_name + " - ID#" + company_id,
+					GSLeagueTable.LINK_COMPANY,
+					company_id
+				)
+			 this.company_names[company_id] <- company_name;
+				break;
+			}
+			case GSEvent.ET_COMPANY_NEW : {
+				local new_company_event = GSEventCompanyNew.Convert(event);
+				local company_id = new_company_event.GetCompanyID()
+				local company_name = GSCompany.GetName(company_id);
+
+				this.company_league_table_elements[company_id] <- GSLeagueTable.NewElement(
+					this.table_id, // table
+					0, // rating
+					company_id, // company
+					company_name + " - ID#" + company_id, // text
+					"" + 0, // score
+					GSLeagueTable.LINK_COMPANY, // link_type
+					company_id // link_target
+				);
+
+				this.company_points[company_id] <- 0;
+				this.company_names[company_id] <- company_name;
+				break;
+			}
+			case GSEvent.ET_COMPANY_BANKRUPT : {
+				local bankrupt_company_event = GSEventCompanyBankrupt.Convert(event);
+				local company_id = bankrupt_company_event.GetCompanyID()
+				GSLog.Info("Company " + this.company_names[company_id] + " went bankrupt. They had a score of: " + this.company_points[company_id]);
+				GSLeagueTable.RemoveElement(
+					this.company_league_table_elements[company_id]
+				);
+				delete this.company_league_table_elements[company_id]
+				delete this.company_points[company_id]
+				delete this.company_names[company_id]
+				break;
+			}
+
+			case GSEvent.ET_COMPANY_MERGER : {
+				local merger_company_event = GSEventCompanyMerger.Convert(event);
+				local company_id = merger_company_event.GetOldCompanyID()
+				GSLog.Info("Company " + this.company_names[company_id] + " got bought out. They had a score of: " + this.company_points[company_id]);
+				GSLeagueTable.RemoveElement(
+					this.company_league_table_elements[company_id]
+				);
+				delete this.company_league_table_elements[company_id]
+				delete this.company_points[company_id]
+				delete this.company_names[company_id]
+				break;
+			}
+		}
+	}
+}
+
+function MainClass::DoDayLoop()
+{
+	for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
+		if (GSCompany.ResolveCompanyID(company_id) != GSCompany.COMPANY_INVALID) {
+			this.company_points[company_id] <- GSController.GetSetting("Company " + company_id);;
+			GSLeagueTable.UpdateElementScore(
+				this.company_league_table_elements[company_id],
+				this.company_points[company_id],
+				"" + this.company_points[company_id]
+			);
+		}
+	}
+}
+
+function MainClass::Save() {
+	GSLog.Info("Saving settings and data...");
+	return {
+		sv_table_id = this.table_id,
+		sv_company_points = this.company_points,
+		sv_company_league_table_elements = this.company_league_table_elements,
+		sv_company_names = this.company_names
+	};
+}
+
+function MainClass::Load(version, data) {
+	GSLog.Info("Loading settings and data from savegame made with version " + version + " of the script...");
+	foreach (key, val in data) {
+		if (key == "sv_table_id") this.table_id = val;
+		if (key == "sv_company_points") this.company_points = val;
+		if (key == "sv_company_league_table_elements") this.company_league_table_elements = val;
+		if (key == "sv_company_names") this.company_names = val;
+	}
+	game_was_loaded = 1;
+}
