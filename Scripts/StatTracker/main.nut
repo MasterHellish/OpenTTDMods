@@ -149,7 +149,7 @@ function MainClass::HandleEvents()
 				local reason = crash.GetCrashReason();
 				switch(reason) {
 					case GSEventVehicleCrashed.CRASH_TRAIN: this.stat_train_crashes += 1; break;
-					case GSEventVehicleCrashed.CRASH_RV_UFO:
+					case GSEventVehicleCrashed.CRASH_RV_UFO: break;
 					case GSEventVehicleCrashed.CRASH_RV_LEVEL_CROSSING: this.stat_road_crashes += 1; break;
 					case GSEventVehicleCrashed.CRASH_AIRCRAFT_NO_AIRPORT: this.stat_plane_crashes += stat_plane_crashes; break;
 					case GSEventVehicleCrashed.CRASH_PLANE_LANDING: this.stat_plane_crashes += stat_plane_crashes; break;
