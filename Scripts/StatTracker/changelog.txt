@@ -1,5 +1,23 @@
-Version 1 (November 2025 : rev 1)
+Version 7
+- Fixed change log
+- Fixed vershion number
+
+Version 6
+- Changed wording to vhicales rather than crashes
+
+Version 5
+- Added vhical crashes
+
+Version 4
+- Added towns and industires to stats
+
+Version 3
+- Added comapny mergers
+- Added optional news article
+
+Version 2
+- Fixed bug with loading
+
+Version 1 (November 2025)
 - Added tracking of stats
-- added optional news article
 - Added load and save
-- Languages : EN
