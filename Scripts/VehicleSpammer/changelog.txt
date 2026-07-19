@@ -1,0 +1,7 @@
+Version 1 (July 2026) - Initial Release
+
+- Implemented the core automated mass-cloning loop, capable of processing up to 5,000 cloning operations per tick.
+- Added the target_company_id setting to define which company receives the cloned vehicles.
+- Added intelligent vehicle-to-depot mapping to ensure newly cloned vehicles are compatible with the depot they are spawned in.
+- Implemented a round-robin distribution system to balance the cloning process evenly across all of the target company's active depots.
+- Added console logging to track the total number of successfully cloned vehicles in real-time.

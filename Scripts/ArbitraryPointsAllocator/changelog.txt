@@ -1,3 +1,6 @@
+Vershion 2 (July 2026)
+- Fixed updating of removed data in HandleEvents
+
 Version 1 (Jan 2026)
 - Creates a custom league table for all companies
 - Automatically adds, updates, and removes companies as the game changes

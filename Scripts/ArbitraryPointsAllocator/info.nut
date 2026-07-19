@@ -4,7 +4,7 @@ class FMainClass extends GSInfo {
 	function GetDescription() {
 		return "Manually sets company points each in-game day based on configured values, enabling custom league table scoring."
 	}
-	function GetVersion()		{ return 1; }
+	function GetVersion()		{ return 2; }
 	function GetDate()			{ return "2026/01/23"; }
 	function CreateInstance()	{ return "MainClass"; }
 	function GetShortName()		{ return "MHAP"; }

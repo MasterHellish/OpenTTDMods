@@ -1,0 +1,7 @@
+Version 1 (July 2026) - Initial Release
+
+- Implemented automatic viewport tracking for newly constructed stations, depots (all transport types), and vehicles across all active companies.
+- Added the client_id setting to dictate which player or spectator camera is controlled by the script.
+- Added the scroll_cooldown_days setting to enforce a configurable delay between camera movements, preventing erratic screen jumping.
+- Added individual toggle settings (scroll_on_station, scroll_on_depot, scroll_on_vehicle) to allow users to enable or disable tracking for specific infrastructure types.
+- Implemented background scanning loops with automatic state-saving to compare existing game entities against new additions.

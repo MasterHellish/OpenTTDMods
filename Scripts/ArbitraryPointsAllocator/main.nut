@@ -61,6 +61,8 @@ function MainClass::HandleEvents()
 			case GSEvent.ET_COMPANY_RENAMED: {
 				local event = GSEventCompanyRenamed.Convert(event);
 				local company_id = event.GetCompanyID()
+				if (!(company_id in this.company_league_table_elements)) continue;
+				if (!(company_id in this.company_points)) continue;
 				local company_name = event.GetNewName()
 				GSLeagueTable.UpdateElementData(
 					this.company_league_table_elements[company_id],
@@ -76,7 +78,6 @@ function MainClass::HandleEvents()
 				local new_company_event = GSEventCompanyNew.Convert(event);
 				local company_id = new_company_event.GetCompanyID()
 				local company_name = GSCompany.GetName(company_id);
-
 				this.company_league_table_elements[company_id] <- GSLeagueTable.NewElement(
 					this.table_id, // table
 					0, // rating
@@ -94,6 +95,8 @@ function MainClass::HandleEvents()
 			case GSEvent.ET_COMPANY_BANKRUPT : {
 				local bankrupt_company_event = GSEventCompanyBankrupt.Convert(event);
 				local company_id = bankrupt_company_event.GetCompanyID()
+				if (!(company_id in this.company_league_table_elements)) continue;
+				if (!(company_id in this.company_points)) continue;
 				GSLog.Info("Company " + this.company_names[company_id] + " went bankrupt. They had a score of: " + this.company_points[company_id]);
 				GSLeagueTable.RemoveElement(
 					this.company_league_table_elements[company_id]
@@ -107,6 +110,8 @@ function MainClass::HandleEvents()
 			case GSEvent.ET_COMPANY_MERGER : {
 				local merger_company_event = GSEventCompanyMerger.Convert(event);
 				local company_id = merger_company_event.GetOldCompanyID()
+				if (!(company_id in this.company_league_table_elements)) continue;
+				if (!(company_id in this.company_points)) continue;
 				GSLog.Info("Company " + this.company_names[company_id] + " got bought out. They had a score of: " + this.company_points[company_id]);
 				GSLeagueTable.RemoveElement(
 					this.company_league_table_elements[company_id]
@@ -124,7 +129,9 @@ function MainClass::DoDayLoop()
 {
 	for (local company_id = GSCompany.COMPANY_FIRST; company_id < GSCompany.COMPANY_LAST; company_id++) {
 		if (GSCompany.ResolveCompanyID(company_id) != GSCompany.COMPANY_INVALID) {
-			this.company_points[company_id] <- GSController.GetSetting("Company " + company_id);;
+			if (!(company_id in this.company_league_table_elements)) continue;
+			if (!(company_id in this.company_points)) continue;
+			this.company_points[company_id] <- GSController.GetSetting("Company " + company_id);
 			GSLeagueTable.UpdateElementScore(
 				this.company_league_table_elements[company_id],
 				this.company_points[company_id],
