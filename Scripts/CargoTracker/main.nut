@@ -7,8 +7,8 @@ class MainClass extends GSController
 	cargo_id = 0;
 
 	// Data
-	company_delivered_cargo = {}; // company id is the key
-	company_names = {}; // company id is the key
+	company_delivered_cargo = {}; // company id is the key // company id is the key
+	company_names = {}; // company id is the key // company id is the key
 
 	// League table
 	table_id = 0;
@@ -76,14 +76,30 @@ function MainClass::HandleEvents()
 				local event = GSEventCompanyRenamed.Convert(event);
 				local company_id = event.GetCompanyID()
 				local company_name = event.GetNewName()
-				GSLeagueTable.UpdateElementData(
+				if (company_id in company_league_table_elements) {
+					GSLeagueTable.UpdateElementData(
 					this.company_league_table_elements[company_id],
 					company_id,
 					company_name,
 					GSLeagueTable.LINK_COMPANY,
 					company_id
-				)
-			 this.company_names[company_id] <- company_name;
+					)
+					this.company_names[company_id] <- company_name;
+				}
+				else {
+					this.company_league_table_elements[company_id] <- GSLeagueTable.NewElement(
+						this.table_id, // table
+						0, // rating
+						company_id, // company
+						company_name, // text
+						"" + 0, // score
+						GSLeagueTable.LINK_COMPANY, // link_type
+						company_id // link_target
+					);
+
+					this.company_delivered_cargo[company_id] <- 0;
+					this.company_names[company_id] <- company_name;
+					}
 				break;
 			}
 			case GSEvent.ET_COMPANY_NEW : {
