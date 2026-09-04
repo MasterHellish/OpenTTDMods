@@ -1,15 +1,26 @@
-# Test Script
+# Tycoon Royale
 
 ## Description
 
-A script that was done to test a variety of features of the API and see how they work.
+---
+
+## Features
+
+---
+
+## How It Works
+
+---
+
+## What's It For?
 
 ---
 
 ## Installation
 
 1. Place the `HelloTycoons` folder into your `OpenTTD\content_download\game` directory
-2. Launch OpenTTD → Game Script Settings → Select Game Script → Choose **Test Script**
+2. Launch OpenTTD → Game Script Settings → Select Game Script → Choose **Hello Tycoons**
+3. Start a new game — you’ll see greetings appear automatically:
 
 ---
 
